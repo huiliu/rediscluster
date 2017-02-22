@@ -130,6 +130,35 @@
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\adlist.c" />
+    <ClCompile Include="src\async.c" />
+    <ClCompile Include="src\command.c" />
+    <ClCompile Include="src\crc16.c" />
+    <ClCompile Include="src\dict.c" />
+    <ClCompile Include="src\hiarray.c" />
+    <ClCompile Include="src\hircluster.c" />
+    <ClCompile Include="src\hiredis.c" />
+    <ClCompile Include="src\hiutil.c" />
+    <ClCompile Include="src\net.c" />
+    <ClCompile Include="src\read.c" />
+    <ClCompile Include="src\sds.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\adlist.h" />
+    <ClInclude Include="src\async.h" />
+    <ClInclude Include="src\command.h" />
+    <ClInclude Include="src\dict.h" />
+    <ClInclude Include="src\fmacros.h" />
+    <ClInclude Include="src\hiarray.h" />
+    <ClInclude Include="src\hircluster.h" />
+    <ClInclude Include="src\hiredis.h" />
+    <ClInclude Include="src\hiutil.h" />
+    <ClInclude Include="src\net.h" />
+    <ClInclude Include="src\read.h" />
+    <ClInclude Include="src\sds.h" />
+    <ClInclude Include="src\win32.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

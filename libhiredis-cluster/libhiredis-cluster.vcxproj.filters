@@ -17,4 +17,83 @@
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\adlist.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\async.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\command.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\crc16.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dict.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hiarray.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hircluster.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hiredis.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hiutil.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\read.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sds.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\adlist.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\async.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\command.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dict.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\fmacros.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\hiarray.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\hircluster.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\hiredis.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\hiutil.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\read.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sds.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\win32.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>
