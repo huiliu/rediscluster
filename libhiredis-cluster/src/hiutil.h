@@ -1,6 +1,12 @@
 #ifndef __HIUTIL_H_
 #define __HIUTIL_H_
 
+#ifdef _MSC_VER
+typedef int socklen_t;
+#define ssize_t     size_t
+#endif // _MSC_VER
+
+
 #include <stdarg.h>
 #include <stdint.h>
 #include <sys/types.h>

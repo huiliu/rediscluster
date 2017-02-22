@@ -250,7 +250,7 @@ static int processBulkItem(redisReader *r) {
     redisReadTask *cur = &(r->rstack[r->ridx]);
     void *obj = NULL;
     char *p, *s;
-    long len;
+    long long len;
     unsigned long bytelen;
     int success = 0;
 

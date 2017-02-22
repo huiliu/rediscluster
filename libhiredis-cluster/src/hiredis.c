@@ -34,7 +34,13 @@
 #include "fmacros.h"
 #include <string.h>
 #include <stdlib.h>
+#ifdef _MSC_VER
+#define close   closesocket
+#define read(fd,buff,sz)        recv(fd,buff,sz,0)
+#define write(fd,buff,sz)       send(fd,buff,sz,0)
+#else
 #include <unistd.h>
+#endif // !_MSC_VER
 #include <assert.h>
 #include <errno.h>
 #include <ctype.h>

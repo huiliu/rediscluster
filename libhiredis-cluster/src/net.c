@@ -33,6 +33,13 @@
  */
 
 #include "fmacros.h"
+#ifdef _MSC_VER
+#include <WinSock2.h>
+#include <WS2tcpip.h>
+#define strdup  _strdup
+#define close   closesocket
+typedef int socklen_t;
+#else
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/select.h>
@@ -41,13 +48,14 @@
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <netdb.h>
+#include <poll.h>
+#endif // _MSC_VER
 #include <fcntl.h>
 #include <string.h>
-#include <netdb.h>
 #include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
-#include <poll.h>
 #include <limits.h>
 #include <stdlib.h>
 
@@ -99,6 +107,23 @@ static int redisCreateSocket(redisContext *c, int type) {
     return REDIS_OK;
 }
 
+#ifdef _MSC_VER
+static int redisSetBlocking(redisContext *c, int blocking)
+{
+    // windows fcntl
+    // https://msdn.microsoft.com/en-us/library/windows/desktop/ms738573(v=vs.85).aspx
+    ULONG iMode = 0;	// 0 block; !0 non-block
+    int ret = ioctlsocket(c->fd, FIONBIO, &iMode);
+    if (NO_ERROR != ret)
+    {
+        __redisSetErrorFromErrno(c, REDIS_ERR_IO, "ioctlsocket");
+        redisContextCloseFd(c);
+        return REDIS_ERR;
+    }
+
+    return REDIS_OK;
+}
+#else
 static int redisSetBlocking(redisContext *c, int blocking) {
     int flags;
 
@@ -123,6 +148,7 @@ static int redisSetBlocking(redisContext *c, int blocking) {
     }
     return REDIS_OK;
 }
+#endif // _MSC_VER
 
 int redisKeepAlive(redisContext *c, int interval) {
     int val = 1;
@@ -178,6 +204,53 @@ static int redisSetTcpNoDelay(redisContext *c) {
 
 #define __MAX_MSEC (((LONG_MAX) - 999) / 1000)
 
+#ifdef _MSC_VER
+static int redisContextWaitReady(redisContext *c, const struct timeval *timeout) {
+    long msec;
+
+    /* Only use timeout when not NULL. */
+    if (timeout != NULL) {
+        if (timeout->tv_usec > 1000000 || timeout->tv_sec > __MAX_MSEC) {
+            __redisSetErrorFromErrno(c, REDIS_ERR_IO, NULL);
+            redisContextCloseFd(c);
+            return REDIS_ERR;
+        }
+
+        msec = (timeout->tv_sec * 1000) + ((timeout->tv_usec + 999) / 1000);
+
+        if (msec < 0 || msec > INT_MAX) {
+            msec = INT_MAX;
+        }
+    }
+
+    WSAPOLLFD wfd[1];
+    wfd->fd = c->fd;
+    wfd->events = POLLRDNORM;	// normal data may be read without blocking
+
+                                // windows poll
+                                // https://msdn.microsoft.com/en-us/library/windows/desktop/ms741669(v=vs.85).aspx
+    int ret;
+    if ((ret = WSAPoll(wfd, 1, msec)) == SOCKET_ERROR)
+    {
+        // WSAGetLastError();
+        __redisSetErrorFromErrno(c, REDIS_ERR_IO, "WSAPoll(2)");
+        redisContextCloseFd(c);
+        return REDIS_ERR;
+    }
+    else if (ret == 0)
+    {
+        __redisSetErrorFromErrno(c, REDIS_ERR_IO, NULL);
+        redisContextCloseFd(c);
+        return REDIS_ERR;
+    }
+    else if (ret > 0)
+    {
+        return REDIS_OK;
+    }
+
+    return REDIS_ERR;
+}
+#else
 static int redisContextWaitReady(redisContext *c, const struct timeval *timeout) {
     struct pollfd   wfd[1];
     long msec;
@@ -225,6 +298,7 @@ static int redisContextWaitReady(redisContext *c, const struct timeval *timeout)
     redisContextCloseFd(c);
     return REDIS_ERR;
 }
+#endif
 
 int redisCheckSocketError(redisContext *c) {
     int err = 0;
@@ -412,6 +486,11 @@ int redisContextConnectBindTcp(redisContext *c, const char *addr, int port,
     return _redisContextConnectTcp(c, addr, port, timeout, source_addr);
 }
 
+#ifdef _MSC_VER
+int redisContextConnectUnix(redisContext *c, const char *path, const struct timeval *timeout) {
+    return -1;
+}
+#else
 int redisContextConnectUnix(redisContext *c, const char *path, const struct timeval *timeout) {
     int blocking = (c->flags & REDIS_BLOCK);
     struct sockaddr_un sa;
@@ -456,3 +535,5 @@ int redisContextConnectUnix(redisContext *c, const char *path, const struct time
     c->flags |= REDIS_CONNECTED;
     return REDIS_OK;
 }
+#endif
+

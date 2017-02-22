@@ -35,7 +35,13 @@
 #define __HIREDIS_H
 #include "read.h"
 #include <stdarg.h> /* for va_list */
+#if _MSC_VER
+#include <WinSock2.h>
+#include <WS2tcpip.h>
+#else
 #include <sys/time.h> /* for struct timeval */
+#endif // _MSC_VER
+
 #include <stdint.h> /* uintXX_t, etc */
 #include "sds.h" /* for sds */
 
@@ -78,6 +84,12 @@
 /* number of times we retry to connect in the case of EADDRNOTAVAIL and
  * SO_REUSEADDR is being used. */
 #define REDIS_CONNECT_RETRIES  10
+
+#ifdef _MSC_VER
+ // http://stackoverflow.com/questions/11718915/alternative-api-of-strerror-r-for-windows-os
+ // https://msdn.microsoft.com/en-us/library/51sah927(v=vs.80).aspx
+#define strerror_r(errno,buff,len)	strerror_s((buff), (len), (errno))
+#endif // _MSC_VER
 
 /* strerror_r has two completely different prototypes and behaviors
  * depending on system issues, so we need to operate on the error buffer
