@@ -2,9 +2,9 @@
 #define _WIN32_HELPER_INCLUDE
 #ifdef _MSC_VER
 
-#ifndef inline
-#define inline __inline
-#endif
+//#ifndef inline
+//#define inline __inline
+//#endif
 
 #ifndef va_copy
 #define va_copy(d,s) ((d) = (s))
